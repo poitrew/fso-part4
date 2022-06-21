@@ -1,4 +1,3 @@
-const { transform } = require('lodash')
 const mongoose = require('mongoose')
 
 const userSchema = mongoose.Schema({
