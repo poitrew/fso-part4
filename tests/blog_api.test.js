@@ -7,6 +7,19 @@ const helper = require('./test_helper')
 
 const api = supertest(app)
 
+let token
+
+beforeAll(async () => {
+    const res = await api
+        .post('/api/login')
+        .send({
+            username: 'root',
+            password: 'abcdef'
+        })
+    
+    token = `Bearer ${res.body.token}`
+})
+
 beforeEach(async () => {
     await Blog.deleteMany({})
     await Blog.insertMany(helper.initialBlogs)
@@ -25,7 +38,7 @@ test('a random blog in the list has the unique id property', async () => {
     expect(result.id).toBeDefined()
 })
 
-test('successfully added a new blog to the database', async () => {
+test('successfully added a new blog to the database with legit token', async () => {
     const testBlog = {
         title: 'Forrest Grump is good',
         author: 'Daniel',
@@ -36,6 +49,7 @@ test('successfully added a new blog to the database', async () => {
     const res = await api
         .post('/api/blogs')
         .send(testBlog)
+        .set('Authorization', token)
         .expect(201)
         .expect('Content-type', /application\/json/)
     
@@ -56,6 +70,7 @@ test('newly added blog without likes input will be default to 0', async () => {
     const res = await api
         .post('/api/blogs')
         .send(testBlog)
+        .set('Authorization', token)
         .expect(201)
         .expect('Content-type', /application\/json/)
     
@@ -70,7 +85,25 @@ test('newly added blog without title or author will be response with status 400'
     await api
         .post('/api/blogs')
         .send(testBlog)
+        .set('Authorization', token)
         .expect(400)
+
+    const blogsInDb = await helper.blogsInDb()
+    expect(blogsInDb).toHaveLength(helper.initialBlogs.length)
+})
+
+test('adding a blog fails with the proper status code if a token is not provided', async () => {
+    const testBlog = {
+        title: 'Forrest Grump is good',
+        author: 'Daniel',
+        url: 'http://instagram.com/',
+    }
+
+    await api
+        .post('/api/blogs')
+        .send(testBlog)
+        .expect(401)
+        .expect('Content-type', /application\/json/)
 })
 
 test('deletetion of a blog', async () => {
@@ -79,6 +112,7 @@ test('deletetion of a blog', async () => {
 
     await api
         .delete(`/api/blogs/${blogToDel.id}`)
+        .set('Authorization', token)
         .expect(204)
 
     const blogsAfterDel = await helper.blogsInDb()

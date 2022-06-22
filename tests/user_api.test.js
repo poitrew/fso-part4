@@ -10,10 +10,10 @@ const api = supertest(app)
 
 describe('initialize only 1 root account', () => {
     beforeEach(async () => {
-        await User.deleteMany({})
+        await User.deleteMany({ username: /^(?!root)/ })
         const passwordHash = await bcrypt.hash('abcdef', 10) 
         const rootUser = new User({
-            username: 'root',
+            username: 'test',
             name: 'Daniel',
             passwordHash
         })
