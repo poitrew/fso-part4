@@ -17,7 +17,7 @@ usersRouter.post('/', async (req, res) => {
         })
     }
 
-    if (password.length < 4) {
+    if (!password || password.length < 4) {
         return res.status(400).json({
             error: 'password must have a minimum length of 4 char'
         })

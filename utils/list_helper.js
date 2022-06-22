@@ -1,8 +1,7 @@
-const { maxBy } = require('lodash');
 const _ = require('lodash')
 
-const dummy = (blogs) => {
-    return 1;
+const dummy = () => {
+    return 1
 }
 
 const totalLikes = (blogs) => {

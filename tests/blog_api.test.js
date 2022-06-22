@@ -1,3 +1,4 @@
+/* eslint-disable no-undef */
 const mongoose = require('mongoose')
 const supertest = require('supertest')
 const app = require('../app')
@@ -27,8 +28,8 @@ test('a random blog in the list has the unique id property', async () => {
 test('successfully added a new blog to the database', async () => {
     const testBlog = {
         title: 'Forrest Grump is good',
-        author: "Daniel",
-        url: "http://instagram.com/",
+        author: 'Daniel',
+        url: 'http://instagram.com/',
         likes: 1
     }
     
@@ -48,8 +49,8 @@ test('successfully added a new blog to the database', async () => {
 test('newly added blog without likes input will be default to 0', async () => {
     const testBlog = {
         title: 'Forrest Grump is good',
-        author: "Daniel",
-        url: "http://instagram.com/",
+        author: 'Daniel',
+        url: 'http://instagram.com/',
     }
 
     const res = await api
@@ -63,10 +64,10 @@ test('newly added blog without likes input will be default to 0', async () => {
 
 test('newly added blog without title or author will be response with status 400', async () => {
     const testBlog = {
-        url: "http://instagram.com/",
+        url: 'http://instagram.com/',
     }
 
-    const res = await api
+    await api
         .post('/api/blogs')
         .send(testBlog)
         .expect(400)
